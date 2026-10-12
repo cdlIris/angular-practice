@@ -1,0 +1,7 @@
+<nav style="display:flex; gap:8px; margin-bottom:16px">
+  <button (click)="active = 0" [disabled]="active === 0">P1 Shop</button>
+  <button (click)="active = 1" [disabled]="active === 1">P2 Cart + Checkout</button>
+</nav>
+
+<app-shop-page *ngIf="active === 0"></app-shop-page>
+<app-checkout-page *ngIf="active === 1"></app-checkout-page>

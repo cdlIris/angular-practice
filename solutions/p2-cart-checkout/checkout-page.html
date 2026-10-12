@@ -1,0 +1,57 @@
+<section aria-labelledby="products-heading">
+  <h2 id="products-heading">Products</h2>
+  <ul>
+    <li *ngFor="let p of products">
+      {{ p.name }} - {{ p.price | currency }}
+      <button type="button" data-test-id="add-button" [attr.aria-label]="'Add ' + p.name + ' to cart'" (click)="addToCart(p)">
+        Add to cart
+      </button>
+    </li>
+  </ul>
+</section>
+
+<section aria-labelledby="cart-heading">
+  <h2 id="cart-heading">Cart (<span data-test-id="cart-count">{{ count }}</span>)</h2>
+
+  <p *ngIf="lines.length === 0" data-test-id="empty-cart">Your cart is empty</p>
+
+  <ul>
+    <li *ngFor="let line of lines" data-test-id="cart-item">
+      <span data-test-id="cart-item-name">{{ line.product.name }}</span>
+      <button type="button" data-test-id="decrease-button" [attr.aria-label]="'Decrease quantity of ' + line.product.name" (click)="decrease(line)">-</button>
+      <span data-test-id="cart-item-qty">{{ line.quantity }}</span>
+      <button type="button" data-test-id="increase-button" [attr.aria-label]="'Increase quantity of ' + line.product.name" (click)="increase(line)">+</button>
+      <button type="button" data-test-id="remove-button" (click)="remove(line)">Remove</button>
+    </li>
+  </ul>
+
+  <p>Total: <span data-test-id="cart-total">{{ total | currency }}</span></p>
+</section>
+
+<section aria-labelledby="checkout-heading">
+  <h2 id="checkout-heading">Checkout</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label for="name">Name</label>
+    <input id="name" data-test-id="name-input" formControlName="name" />
+    <div *ngIf="showError('name')" data-test-id="name-error" role="alert">
+      <ng-container *ngIf="form.get('name')?.hasError('required')">Name is required</ng-container>
+      <ng-container *ngIf="form.get('name')?.hasError('minlength')">Name must be at least 2 characters</ng-container>
+    </div>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" data-test-id="email-input" formControlName="email" />
+    <div *ngIf="showError('email')" data-test-id="email-error" role="alert">
+      <ng-container *ngIf="form.get('email')?.hasError('required')">Email is required</ng-container>
+      <ng-container *ngIf="form.get('email')?.hasError('email')">Enter a valid email</ng-container>
+    </div>
+
+    <label for="zip">ZIP</label>
+    <input id="zip" data-test-id="zip-input" formControlName="zip" />
+    <div *ngIf="showError('zip')" data-test-id="zip-error" role="alert">ZIP must be 5 digits</div>
+
+    <button type="submit" data-test-id="submit-button" [disabled]="!canSubmit">Place order</button>
+  </form>
+
+  <p *ngIf="successMessage" data-test-id="success-message" role="status">{{ successMessage }}</p>
+</section>

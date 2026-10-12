@@ -1,0 +1,56 @@
+<header>
+  <h2>Shop</h2>
+  Wishlist: <span data-test-id="wishlist-count">{{ wishlist.size }}</span>
+</header>
+
+<p *ngIf="loading" data-test-id="loading" role="status">Loading...</p>
+
+<div *ngIf="error" role="alert">
+  <p data-test-id="error-message">{{ error }}</p>
+  <button type="button" data-test-id="retry-button" (click)="load()">Retry</button>
+</div>
+
+<ng-container *ngIf="!loading && !error">
+  <div class="toolbar">
+    <label for="search">Search</label>
+    <input
+      id="search"
+      data-test-id="search-input"
+      [(ngModel)]="searchText"
+      (ngModelChange)="onCriteriaChange()"
+    />
+
+    <label for="category">Category</label>
+    <select id="category" data-test-id="category-select" [(ngModel)]="selectedCategory" (ngModelChange)="onCriteriaChange()">
+      <option value="">All</option>
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+
+    <label for="sort">Sort</label>
+    <select id="sort" data-test-id="sort-select" [(ngModel)]="sortBy" (ngModelChange)="onCriteriaChange()">
+      <option value="">Default</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+      <option value="rating-desc">Rating</option>
+    </select>
+  </div>
+
+  <p *ngIf="filteredProducts.length === 0" data-test-id="no-results">No products found</p>
+
+  <ul>
+    <li *ngFor="let p of pagedProducts; trackBy: trackById">
+      <app-product-card
+        data-test-id="product-item"
+        [product]="p"
+        [wishlisted]="isWishlisted(p)"
+        (wishlistToggle)="toggleWishlist($event)"
+      ></app-product-card>
+    </li>
+  </ul>
+
+  <nav aria-label="Pagination">
+    <button type="button" data-test-id="prev-button" (click)="prev()" [disabled]="page === 1">Prev</button>
+    <span data-test-id="page-info">Page {{ page }} of {{ totalPages }}</span>
+    <button type="button" data-test-id="next-button" (click)="next()" [disabled]="page === totalPages">Next</button>
+  </nav>
+</ng-container>
